@@ -151,7 +151,6 @@ var Engine = (function (global) {
                 if (player.lives - 1 === 0) {
                     resetGame();
                 } else {
-                    console.log('heyo');
                     resetLevel();
                 }
             }
@@ -195,7 +194,7 @@ var Engine = (function (global) {
         gamestate.score += Math.floor(100 - secondsToFinish);
         levelStartTime = Date.now();
         gamestate.level += 1;
-        if (gamestate.level > 25 === 0) {
+        if (gamestate.level > 25 && gamestate.speed < 2.5) {
             gamestate.speed += 0.05;
         }
         $("#level").html(gamestate.level);
@@ -230,7 +229,6 @@ var Engine = (function (global) {
     }
 
     function resetLevel() {
-        console.log('resetting');
         player.lives -= 1;
         pauseAlert(deathMessage);
         reset();
