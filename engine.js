@@ -6,8 +6,8 @@ var Engine = (function (global) {
         patterns = {},
         lastTime;
 
-    canvas.width = 707;
-    canvas.height = 606;
+    canvas.width = X_CANVAS;
+    canvas.height = Y_CANVAS;
     doc.body.appendChild(canvas);
 
     function main() {
@@ -56,7 +56,7 @@ var Engine = (function (global) {
     }
 
     function checkLevelCompletion() {
-        if (player.x === map.objects.end.x && player.y === map.objects.end.y) {
+        if (player.x === map.end.x && player.y === map.end.y) {
             levelFinishTime = Date.now();
             setupNewLevel();
         }
@@ -69,19 +69,22 @@ var Engine = (function (global) {
         renderLives();
         renderScore();
         renderHadouken();
+        if (gamestate.level < 0) {
+            invertCanvas();
+        }
     }
 
     function renderBackground() {
-        ctx.drawImage(Resources.get('images/background.png'), 0, 0);
+        ctx.drawImage(Resources.get('images/background.png'), -20, -20);
     }
 
     function renderMap() {
         map.tiles.forEach(function (tile) {
             tile.render();
         });
-        map.objects.start.render();
-        map.objects.end.render();
-        map.objects.rocks.forEach(function (rock) {
+        map.start.render();
+        map.end.render();
+        map.rocks.forEach(function (rock) {
             rock.render();
         });
     }
@@ -110,13 +113,15 @@ var Engine = (function (global) {
 
     function renderScore() {
         ctx.font = "20px 'Press Start 2P'";
+        ctx.fillStyle = 'black';
         if (gamestate.score > 10000) {
             ctx.fillText('SCORE: A LOT!', 400, 40);
-        }
-        else {
+        } else if (gamestate.level < 0) {
+            ctx.fillText('SCORE: -' + gamestate.score, 400, 40);
+        } else {
             ctx.fillText('SCORE: ' + gamestate.score, 400, 40);
         }
-        
+
     }
 
     function renderHadouken() {
@@ -127,6 +132,18 @@ var Engine = (function (global) {
             ctx.textAlign = 'center';
             ctx.fillText("HADOUKEN!!!", player.x + 40, player.y + 30);
         }
+    }
+    
+    function invertCanvas() {
+        var imgData = ctx.getImageData(0, 0, X_CANVAS, Y_CANVAS);
+        // invert colors
+        for (var i = 0; i < imgData.data.length; i += 4) {
+            imgData.data[i] = 255 - imgData.data[i];
+            imgData.data[i + 1] = 255 - imgData.data[i + 1];
+            imgData.data[i + 2] = 255 - imgData.data[i + 2];
+            imgData.data[i + 3] = 255;
+        }
+        ctx.putImageData(imgData, 0, 0);
     }
 
     function checkAllCollisions() {
@@ -191,13 +208,18 @@ var Engine = (function (global) {
 
     function setupNewLevel() {
         var secondsToFinish = Math.floor(levelFinishTime - levelStartTime) / 1000;
-        gamestate.score += Math.floor(100 - secondsToFinish);
+        gamestate.score += Math.floor(100 - 4 * secondsToFinish);
         levelStartTime = Date.now();
-        gamestate.level += 1;
+        if (gamestate.activeCheats.indexOf('time') === -1) {
+            gamestate.level += 1;
+            $("#level").html(gamestate.level);
+        } else {
+            gamestate.level -= 1;
+            $("#level").html('?');
+        }
         if (gamestate.level > 25 && gamestate.speed < 2.5) {
             gamestate.speed += 0.05;
         }
-        $("#level").html(gamestate.level);
         map = generateMap();
         player.startX().startY();
         allEnemies = createEnemies();
@@ -217,7 +239,7 @@ var Engine = (function (global) {
         player.x = -100;
         player.y = -100;
         gamestate.paused = true;
-        bootbox.alert(gameOverMessage, function() {
+        bootbox.alert(gameOverMessage, function () {
             player.startX().startY();
             allEnemies = createEnemies();
             allItems = createItems();
@@ -239,7 +261,7 @@ var Engine = (function (global) {
             if (player.x === item.x && player.y === item.y) {
                 if (item instanceof Key) {
                     player.hasKey = true;
-                } else if (item instanceof Heart) {
+                } else if (item instanceof Heart && player.lives < player.maxLives) {
                     player.lives++;
                 } else if (item instanceof Gem) {
                     gamestate.score += 50;
@@ -252,11 +274,9 @@ var Engine = (function (global) {
     function generateMap() {
         var map = {
             'tiles': [],
-            'objects': {
-                'start': null,
-                'end': null,
-                'rocks': []
-            }
+            'start': null,
+            'end': null,
+            'rocks': []
         };
         var mapStart = (Math.floor(Math.random() * 4) + 1) * X_STEP;
         var mapEnd = (Math.floor(Math.random() * 4) + 1) * X_STEP;
@@ -282,9 +302,9 @@ var Engine = (function (global) {
 
             }
         }
-        map.objects.start = new StartPoint(mapStart, 5 * Y_STEP);
-        map.objects.end = new Door(mapEnd, Y_TOP);
-        //map.objects.rocks.push(new Rock(mapEnd, Y_TOP + Y_STEP));
+        map.start = new StartPoint(mapStart, 5 * Y_STEP);
+        map.end = new Door(mapEnd, Y_TOP);
+        //map.rocks.push(new Rock(mapEnd, Y_TOP + Y_STEP));
         return map;
     }
 

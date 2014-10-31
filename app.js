@@ -4,7 +4,9 @@ var X_LEFT = 0,
     Y_TOP = 0,
     Y_BOTTOM = 498,
     X_STEP = 101,
-    Y_STEP = 83;
+    Y_STEP = 83,
+    X_CANVAS = 707,
+    Y_CANVAS = 606;
 
 
 // General Utility Functions
@@ -55,6 +57,14 @@ var cheats = {
         gamestate.activeCheats.push('udacity');
         player.isUdacious = true;
         player.hasKey = true;
+    },
+    'Hot tub time machine': function() {
+        bootbox.alert(timeMachineMessage1,function() {
+            $('#title').html('HUH???');
+            gamestate.activeCheats.push('time');
+            gamestate.level = -1;
+            $('#level').html('?');
+        });
     }
 };
 var keys = [];
@@ -306,6 +316,7 @@ Centipede.prototype.constructor = Centipede;
 var Player = function () {
     this.width = 60;
     this.height = 70;
+    this.maxLives = 5;
     this.lives = 3;
     this.isInvincible = false;
     this.hasKey = false;
@@ -322,11 +333,11 @@ Player.prototype.render = function () {
     }
 };
 Player.prototype.startX = function () {
-    this.x = map.objects.start.x;
+    this.x = map.start.x;
     return this;
 };
 Player.prototype.startY = function () {
-    this.y = map.objects.start.y;
+    this.y = map.start.y;
     return this;
 };
 Player.prototype.left = function () {
@@ -368,11 +379,11 @@ Player.prototype.move = function (direction) {
     });
 
     if (onMap) {
-        if (newX === map.objects.end.x && newY === map.objects.end.y && !this.hasKey) {
+        if (newX === map.end.x && newY === map.end.y && !this.hasKey) {
             return;
         }
         var hitRock = false;
-        map.objects.rocks.forEach(function (rock) {
+        map.rocks.forEach(function (rock) {
             if (newX === rock.x && newY === rock.y) {
                 hitRock = true;
 
@@ -791,9 +802,16 @@ var udaciousMessage = "<h4>Hey, I think so too!  Glad you're enjoying it!</h4><h
 var hadoukenMessage = "<h2>HADOUKEN!!!</h2><hr><p style='text-align:center'>" +
     "I'd recommend pressing <strong>A</strong> or <strong>D</strong></p>";
 
+var timeMachineMessage1 = "<h2>You Step Into The Time Machine...</h2><hr>" +
+    "<p>...hoping to go back in time and tell your past self to avoid this place " +
+    "so you'll never get roped into running around getting crushed by giant bugs repeatedly...</p>";
+
+var timeMachineMessage2 = "<p>...but something went very wrong.  Where are you?";
+
 var cheatMessages = {
     'there is no cow level': cowMessage,
     'I AM INVINCIBLE!!!': invincibleMessage,
     'This game is completely Udacious!!!': udaciousMessage,
-    'Street fighter is cool': hadoukenMessage
+    'Street fighter is cool': hadoukenMessage,
+    'Hot tub time machine': timeMachineMessage2
 };
