@@ -4,9 +4,7 @@ var X_LEFT = 0,
     Y_TOP = 0,
     Y_BOTTOM = 498,
     X_STEP = 101,
-    Y_STEP = 83,
-    ROWS = 6,
-    COLS = 5;
+    Y_STEP = 83;
 
 
 // General Utility Functions
@@ -376,10 +374,6 @@ Player.prototype.move = function (direction) {
         var hitRock = false;
         map.objects.rocks.forEach(function (rock) {
             if (newX === rock.x && newY === rock.y) {
-                console.log(newX);
-                console.log(newY);
-                console.log(rock.x);
-                console.log(rock.y);
                 hitRock = true;
 
             }
@@ -594,7 +588,6 @@ var Gem = function (x, y) {
     Item.call(this, x, y);
     this.spriteOptions = ['images/Gem Blue.png', 'images/Gem Green.png', 'images/Gem Orange.png'];
     this.sprite = this.spriteOptions[Math.floor(Math.random() * this.spriteOptions.length)];
-    console.log(this.sprite);
     this.fading = false;
     this.disappear();
 };
