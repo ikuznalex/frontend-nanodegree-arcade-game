@@ -40,16 +40,16 @@ var Engine = (function (global) {
         allEnemies.forEach(function (enemy) {
             enemy.update(dt);
         });
-        allItems.forEach(function (item, i) {
+        allItems.forEach(function (item) {
             item.update(dt);
             if (item.destroyed) {
-                allItems.splice(i, 1);
+                removeElement(item, allItems);
             }
         })
-        allAttacks.forEach(function (attack, i) {
+        allAttacks.forEach(function (attack) {
             attack.update(dt);
             if (attack.speed === 0) {
-                allAttacks.splice(i, 1);
+                removeElement(attack, allAttacks);
             }
         });
         player.update();
@@ -75,7 +75,8 @@ var Engine = (function (global) {
     }
 
     function renderBackground() {
-        ctx.drawImage(Resources.get('images/background.png'), -20, -20);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(-20, -20, 1000, 1000);
     }
 
     function renderMap() {
@@ -114,6 +115,7 @@ var Engine = (function (global) {
     function renderScore() {
         ctx.font = "20px 'Press Start 2P'";
         ctx.fillStyle = 'black';
+        ctx.textAlign = 'left';
         if (gamestate.score > 10000) {
             ctx.fillText('SCORE: A LOT!', 400, 40);
         } else if (gamestate.level < 0) {
@@ -121,7 +123,6 @@ var Engine = (function (global) {
         } else {
             ctx.fillText('SCORE: ' + gamestate.score, 400, 40);
         }
-
     }
 
     function renderHadouken() {
@@ -133,10 +134,9 @@ var Engine = (function (global) {
             ctx.fillText("HADOUKEN!!!", player.x + 40, player.y + 30);
         }
     }
-    
+
     function invertCanvas() {
         var imgData = ctx.getImageData(0, 0, X_CANVAS, Y_CANVAS);
-        // invert colors
         for (var i = 0; i < imgData.data.length; i += 4) {
             imgData.data[i] = 255 - imgData.data[i];
             imgData.data[i + 1] = 255 - imgData.data[i + 1];
@@ -147,10 +147,10 @@ var Engine = (function (global) {
     }
 
     function checkAllCollisions() {
-        allEnemies.forEach(function (enemy, i) {
+        allEnemies.forEach(function (enemy) {
             if (checkCollision(player, enemy)) {
                 if (player.isInvincible || player.isUdacious) {
-                    allEnemies.splice(i, 1);
+                    removeElement(enemy, allEnemies);
                 } else if (player.lives - 1 === 0) {
                     resetGame();
                 } else {
@@ -159,12 +159,13 @@ var Engine = (function (global) {
             }
             allAttacks.forEach(function (attack) {
                 if (checkCollision(enemy, attack)) {
-                    allEnemies.splice(i, 1);
+                    removeElement(enemy, allEnemies);
                 }
             })
         })
         map.tiles.forEach(function (tile) {
-            if (tile instanceof Water && player.x === tile.x && player.y === tile.y && !player.isUdacious) {
+            if (tile instanceof Water && player.x === tile.x &&
+                player.y === tile.y && !player.isUdacious) {
                 if (player.lives - 1 === 0) {
                     resetGame();
                 } else {
@@ -175,25 +176,14 @@ var Engine = (function (global) {
     }
 
     function checkCollision(entity1, entity2) {
-        if (inRange(entity1.right(), entity2.left(), entity2.right()) || inRange(entity1.left(), entity2.left(), entity2.right()) || (inRange(entity2.left(), entity1.left(), entity1.right())) || (inRange(entity2.right(), entity1.left(), entity1.right()))) {
-            if (entity1.y === entity2.y) {
+        if (inRange(entity1.right(), entity2.left(), entity2.right()) ||
+            inRange(entity1.left(), entity2.left(), entity2.right())) {
+            if (inRange(entity1.top(), entity2.top(), entity2.bottom()) ||
+                inRange(entity1.bottom(), entity2.top(), entity2.bottom())) {
                 return true;
             }
         }
         return false;
-    }
-
-    function reset() {
-        player.startX().startY();
-        allEnemies.forEach(function (enemy) {
-            enemy.startX().startY().setSpeed();
-            if (enemy instanceof Backtracker) {
-                enemy.sprite = 'images/backtracker.png';
-                if (gamestate.activeCheats.indexOf('cow') !== -1) {
-                    enemy.sprite = 'images/Cow.png';
-                }
-            }
-        })
     }
 
     function setupNewGame() {
@@ -207,10 +197,10 @@ var Engine = (function (global) {
     }
 
     function setupNewLevel() {
-        var secondsToFinish = Math.floor(levelFinishTime - levelStartTime) / 1000;
-        gamestate.score += Math.floor(100 - 4 * secondsToFinish);
+        var secsToFinish = Math.floor(levelFinishTime - levelStartTime) / 1000;
+        gamestate.score += Math.floor(100 - 4 * secsToFinish);
         levelStartTime = Date.now();
-        if (gamestate.activeCheats.indexOf('time') === -1) {
+        if (!gamestate.activeCheats.time) {
             gamestate.level += 1;
             $("#level").html(gamestate.level);
         } else {
@@ -231,6 +221,7 @@ var Engine = (function (global) {
     }
 
     function resetGame() {
+        $('#title').html('Frogger (Clone): The Buggening!');
         var levelAchieved = gamestate.level;
         var pointsEarned = gamestate.score;
         gamestate = new GameState();
@@ -253,22 +244,32 @@ var Engine = (function (global) {
     function resetLevel() {
         player.lives -= 1;
         pauseAlert(deathMessage);
-        reset();
+        player.startX().startY();
+        allEnemies.forEach(function (enemy) {
+            enemy.startX().startY().setSpeed();
+            if (enemy instanceof Backtracker) {
+                enemy.sprite = 'images/backtracker.png';
+                if (gamestate.activeCheats.cow) {
+                    enemy.sprite = 'images/Cow.png';
+                }
+            }
+        });
     }
 
     function collectItems() {
-        allItems.forEach(function (item, i) {
+        allItems.forEach(function (item) {
             if (player.x === item.x && player.y === item.y) {
                 if (item instanceof Key) {
                     player.hasKey = true;
-                } else if (item instanceof Heart && player.lives < player.maxLives) {
+                } else if (item instanceof Heart &&
+                    player.lives < player.maxLives) {
                     player.lives++;
                 } else if (item instanceof Gem) {
                     gamestate.score += 50;
                 }
-                allItems.splice(i, 1);
+                removeElement(item, allItems);
             }
-        })
+        });
     }
 
     function generateMap() {
@@ -278,8 +279,8 @@ var Engine = (function (global) {
             'end': null,
             'rocks': []
         };
-        var mapStart = (Math.floor(Math.random() * 4) + 1) * X_STEP;
-        var mapEnd = (Math.floor(Math.random() * 4) + 1) * X_STEP;
+        var mapStart = randInt(1, 4) * X_STEP;
+        var mapEnd = randInt(1, 4) * X_STEP;
         for (var j = 0; j < Y_BOTTOM; j += Y_STEP) {
             for (var i = 0; i < X_RIGHT; i += X_STEP) {
                 if (j === 0) {
@@ -304,48 +305,43 @@ var Engine = (function (global) {
         }
         map.start = new StartPoint(mapStart, 5 * Y_STEP);
         map.end = new Door(mapEnd, Y_TOP);
-        //map.rocks.push(new Rock(mapEnd, Y_TOP + Y_STEP));
-        return map;
-    }
-
-    function shuffleArray(array) {
-        for (var i = array.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            var temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
+        if (gamestate.level > 15) {
+            var rockNumber = randInt(1, 3);
+            var allRockCoords = [];
+            map.tiles.forEach(function (tile) {
+                if ((!(tile instanceof Water)) && tile.x !== map.start.x &&
+                    tile.x !== map.end.x) {
+                    allRockCoords.push([tile.x, tile.y]);
+                }
+            });
+            for (var i = 0; i < rockNumber; i++) {
+                var rockCoords = choice(allRockCoords);
+                map.rocks.push(new Rock(rockCoords[0], rockCoords[1]));
+                removeElement(rockCoords, allRockCoords);
+            }
         }
-        return array;
+        return map;
     }
 
     function createEnemies() {
         var enemies = [];
-        var enemyOptions = ['enemy', 'charger', 'backtracker', 'sidestepper', 'slowpoke', 'centipede'];
-        var enemyWeights;
-        if (gamestate.level <= 3) {
-            enemyWeights = [1, 0, 0, 0, 0, 0];
-        } else if (gamestate.level <= 10) {
-            enemyWeights = [0.7, 0.1, 0.1, 0, 0.1, 0];
-        } else if (gamestate.level <= 15) {
-            enemyWeights = [0.5, 0.15, 0.15, 0.1, 0.1, 0];
-        } else if (gamestate.level <= 20) {
-            enemyWeights = [0.3, 0.2, 0.2, 0.1, 0.1, 0.1];
-        } else if (gamestate.level <= 25) {
-            enemyWeights = [0.1, 0.2, 0.2, 0.1, 0.3, 0.1];
-        } else {
-            enemyWeights = [0, 0.2, 0.2, 0.2, 0.2, 0.2];
-        }
+        var enemyObject = calcEnemyWeights();
+        var enemyNames = Object.keys(enemyObject);
+        var enemyWeights = [];
+        enemyNames.forEach(function (enemy) {
+            enemyWeights.push(enemyObject[enemy]);
+        });
 
-        var weightedEnemyList = generateWeighedList(enemyOptions, enemyWeights);
+        var weightedEnemyList = generateWeighedList(enemyNames, enemyWeights);
 
         var newEnemy;
         var newSelection;
-        var enemyCount = 2 + Math.floor(gamestate.level / 5);
+        var enemyCount = 2 + Math.abs(Math.floor(gamestate.level / 5));
         if (gamestate.level > 25) {
             enemyCount = 8;
         }
         for (var i = 0; i < enemyCount; i++) {
-            newSelection = weightedEnemyList[Math.floor(Math.random() * (weightedEnemyList.length))];
+            newSelection = choice(weightedEnemyList);
             if (newSelection === 'enemy') {
                 newEnemy = new Enemy();
             } else if (newSelection === 'charger') {
@@ -364,33 +360,64 @@ var Engine = (function (global) {
         return enemies;
     }
 
+    function calcEnemyWeights() {
+        var enemyWeights = {
+            'enemy': 1,
+            'charger': 0,
+            'backtracker': 0,
+            'sidestepper': 0,
+            'slowpoke': 0,
+            'centipede': 0
+        };
+        if (gamestate.level > 5) {
+            for (var i = 0; i < gamestate.level - 2; i++) {
+                if (enemyWeights.enemy > 0) {
+                    enemyWeights.enemy -= 0.05;
+                    enemyWeights.charger += 0.01;
+                    enemyWeights.backtracker += 0.01;
+                    enemyWeights.sidestepper += 0.01;
+                    enemyWeights.slowpoke += 0.01;
+                    enemyWeights.centipede += 0.01;
+                }
+            }
+        }
+        return enemyWeights;
+    }
+
     function createItems() {
         var items = [];
-        var xCoords = [0, 1, 2, 3, 4, 5, 6];
-        var yCoords = [1, 2, 3, 4];
-        var keyX = Math.floor(Math.random() * xCoords.length);
-        var keyY = Math.floor(Math.random() * yCoords.length);
-        var x = xCoords[keyX] * X_STEP;
-        var y = yCoords[keyY] * Y_STEP;
-
-        var key = new Key(x, y);
+        var itemCoords = [];
+        var onRock;
+        map.tiles.forEach(function (tile) {
+            onRock = false;
+            if ((!(tile instanceof Water)) && (tile.x !== map.start.x ||
+                tile.y !== map.start.y) && (tile.x !== map.end.x || 
+                                            tile.y !== map.end.y)) {
+                map.rocks.forEach(function (rock) {
+                    if (tile.x === rock.x && tile.y === rock.y) {
+                        onRock = true;
+                    }
+                });
+                if (!onRock) {
+                    itemCoords.push([tile.x, tile.y]);
+                }
+            }
+        });
+        var keyCoords = choice(itemCoords);
+        removeElement(keyCoords, itemCoords);
+        var key = new Key(keyCoords[0], keyCoords[1]);
         items.push(key);
-        xCoords.splice(keyX, 1);
-        yCoords.splice(keyY, 1);
 
-        var gemX = Math.floor(Math.random() * xCoords.length);
-        var gemY = Math.floor(Math.random() * yCoords.length);
-        var gem = new Gem(xCoords[gemX] * X_STEP, yCoords[gemY] * Y_STEP);
+        var gemCoords = choice(itemCoords);
+        removeElement(gemCoords, itemCoords);
+        var gem = new Gem(gemCoords[0], gemCoords[1]);;
         items.push(gem);
-        xCoords.splice(gemX, 1);
-        yCoords.splice(gemY, 1);
-
 
         if (gamestate.level % 5 === 0) {
             if (Math.random() > 0.5) {
-                var heartX = Math.floor(Math.random() * xCoords.length);
-                var heartY = Math.floor(Math.random() * yCoords.length);
-                var heart = new Heart(xCoords[heartX] * X_STEP, yCoords[heartY] * Y_STEP);
+                var heartCoords = choice(itemCoords);
+                removeElement(heartCoords, itemCoords);
+                var heart = new Heart(heartCoords[0], heartCoords[1]);
                 items.push(heart);
             }
         }
@@ -423,7 +450,6 @@ var Engine = (function (global) {
         'images/Gem Blue.png',
         'images/Gem Green.png',
         'images/Gem Orange.png',
-        'images/background.png',
         'images/Rock.png',
         'images/Key.png',
         'images/Door.png',

@@ -8,13 +8,27 @@ var X_LEFT = 0,
     X_CANVAS = 707,
     Y_CANVAS = 606;
 
-
 // General Utility Functions
 var inRange = function (value, min, max) {
-    if (value < max && value > min) {
+    if (value <= max && value >= min) {
         return true;
     }
     return false;
+};
+
+var randInt = function(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+var choice = function(array) {
+    return array[Math.floor(Math.random() * array.length)];
+};
+
+var removeElement = function(element, array) {
+    var index = array.indexOf(element);
+    if (index !== -1) {
+        array.splice(index, 1); 
+    }
 };
 
 var pauseAlert = function (text) {
@@ -37,39 +51,43 @@ var generateWeighedList = function (list, weight) {
     return weighed_list;
 };
 
+// Array where keystroke codes will be sent.
+// If variable keys contains secretCode, player
+// god mode will be activated.  This unlocks
+// ability to enter cheats.
+var keys = [];
+var secretCode = '38,38,40,40,37,39,37,39,66,65';
+
 // Variables Relating to Game Cheats
 var cheats = {
     'there is no cow level': function () {
-        gamestate.activeCheats.push('cow');
+        gamestate.activeCheats.cow = true;
         allEnemies.forEach(function (enemy) {
             enemy.sprite = 'images/Cow.png';
         })
     },
     'I AM INVINCIBLE!!!': function () {
-        gamestate.activeCheats.push('invincible');
+        gamestate.activeCheats.invincible = true;
         player.blink();
         player.isInvincible = true;
     },
     'Street fighter is cool': function () {
-        gamestate.activeCheats.push('hadouken');
+        gamestate.activeCheats.hadouken = true;
     },
     'This game is completely Udacious!!!': function () {
-        gamestate.activeCheats.push('udacity');
+        gamestate.activeCheats.udacity = true;
         player.isUdacious = true;
         player.hasKey = true;
     },
     'Hot tub time machine': function() {
         bootbox.alert(timeMachineMessage1,function() {
             $('#title').html('HUH???');
-            gamestate.activeCheats.push('time');
+            gamestate.activeCheats.time = true;
             gamestate.level = -1;
             $('#level').html('?');
         });
     }
 };
-var keys = [];
-var secretCode = '38,38,40,40,37,39,37,39,66,65';
-
 
 // Constructors
 /**
@@ -81,7 +99,13 @@ var GameState = function () {
     this.level = 1;
     this.speed = 1;
     this.score = 0;
-    this.activeCheats = [];
+    this.activeCheats = {
+        'cow': false,
+        'hadouken': false,
+        'time': false,
+        'udacity': false,
+        'invincible': false
+    };
 };
 
 /**
@@ -90,20 +114,25 @@ var GameState = function () {
  */
 var Enemy = function () {
     this.width = 90;
-    this.height = 70;
+    this.height = 80;
     this.maxSpeed = 200;
     this.minSpeed = 50;
-    this.yStartOptions = [Y_TOP + Y_STEP, Y_TOP + 2 * Y_STEP, Y_TOP + 3 * Y_STEP, Y_TOP + 4 * Y_STEP];
-    this.xStartOptions = [0, -X_STEP, -2 * X_STEP, X_STEP, X_STEP * 2, X_STEP * 3, X_STEP * 4];
+    this.xStartOptions = [];
+    this.yStartOptions = [];
+    for (var i = -3; i < 5; i++) {
+        this.xStartOptions.push(i * X_STEP);
+    }
+    for (var j = 1; j < 5; j++) {
+        this.yStartOptions.push(j * Y_STEP);
+    }
     this.startX();
     this.startY();
     this.setSpeed();
     this.sprite = 'images/enemy-bug.png';
-    if (gamestate.activeCheats.indexOf('cow') !== -1) {
+    if (gamestate.activeCheats.cow) {
         this.sprite = 'images/Cow.png';
     }
 };
-
 
 Enemy.prototype.update = function (dt) {
     if (!gamestate.paused) {
@@ -136,17 +165,17 @@ Enemy.prototype.bottom = function () {
 };
 
 Enemy.prototype.startX = function () {
-    this.x = this.xStartOptions[Math.floor(Math.random() * (this.xStartOptions.length))];
+    this.x = choice(this.xStartOptions);
     return this;
 };
 
 Enemy.prototype.startY = function () {
-    this.y = this.yStartOptions[Math.floor(Math.random() * (this.yStartOptions.length))];
+    this.y = choice(this.yStartOptions);
     return this;
 };
 
 Enemy.prototype.setSpeed = function () {
-    this.speed = Math.random() * (this.maxSpeed - this.minSpeed) + this.minSpeed;
+    this.speed = randInt(this.minSpeed, this.maxSpeed);
     return this;
 };
 
@@ -157,7 +186,7 @@ Enemy.prototype.setSpeed = function () {
 var Charger = function () {
     Enemy.call(this);
     this.sprite = 'images/charger.png';
-    if (gamestate.activeCheats.indexOf('cow') !== -1) {
+    if (gamestate.activeCheats.cow) {
         this.sprite = 'images/Cow.png';
     }
     this.charging();
@@ -167,22 +196,23 @@ Charger.prototype = Object.create(Enemy.prototype);
 Charger.prototype.constructor = Charger;
 Charger.prototype.charging = function () {
     var thisCharger = this;
+    var originalSpeed = thisCharger.speed;
+    var chargingInterval = randInt(2000, 5000);
     setInterval(function () {
         var willCharge = Math.random();
         if (willCharge > 0.5) {
-            if (gamestate.activeCheats.indexOf('cow') === -1) {
+            if (!gamestate.activeCheats.cow) {
                 thisCharger.sprite = 'images/charger-charging.png';
             }
-            thisCharger.speed *= 5;
+            thisCharger.speed = 700;
             setTimeout(function () {
-                thisCharger.speed /= 5;
-                if (gamestate.activeCheats.indexOf('cow') === -1) {
+                thisCharger.speed = originalSpeed;
+                if (!gamestate.activeCheats.cow) {
                     thisCharger.sprite = 'images/charger.png';
                 }
             }, 500);
-
         }
-    }, 2000)
+    }, chargingInterval)
 };
 
 /**
@@ -192,7 +222,7 @@ Charger.prototype.charging = function () {
 var Sidestepper = function () {
     Enemy.call(this);
     this.sprite = 'images/sidestepper.png';
-    if (gamestate.activeCheats.indexOf('cow') !== -1) {
+    if (gamestate.activeCheats.cow) {
         this.sprite = 'images/Cow.png';
     }
     this.sidestep();
@@ -201,6 +231,7 @@ Sidestepper.prototype = Object.create(Enemy.prototype);
 Sidestepper.prototype.constructor = Sidestepper;
 Sidestepper.prototype.sidestep = function () {
     var thisSidestepper = this;
+    var steppingInterval = randInt(1000, 3000);
     setInterval(function () {
         var willStep = Math.random();
         if (willStep > 0.3) {
@@ -211,7 +242,7 @@ Sidestepper.prototype.sidestep = function () {
                 thisSidestepper.y -= Y_STEP;
             }
         }
-    }, 1500)
+    }, steppingInterval)
 };
 
 /**
@@ -221,7 +252,7 @@ Sidestepper.prototype.sidestep = function () {
 var Backtracker = function () {
     Enemy.call(this);
     this.sprite = 'images/backtracker.png';
-    if (gamestate.activeCheats.indexOf('cow') !== -1) {
+    if (gamestate.activeCheats.cow) {
         this.sprite = 'images/Cow.png';
     }
     this.backtrack();
@@ -232,33 +263,34 @@ Backtracker.prototype.update = function (dt) {
     if (!gamestate.paused) {
         this.x += dt * this.speed * gamestate.speed;
     }
-    if (gamestate.activeCheats.indexOf('cow') !== -1) {
-        if (this.left() > X_RIGHT && this.speed > 0) {
-            this.speed *= -1;
+    if (this.left() > X_RIGHT + 2*X_STEP && this.speed > 0) {
+        this.speed *= -1;
+        if (gamestate.activeCheats.cow){
             this.sprite = 'images/Cow-reverse.png';
         }
-        if (this.right() < X_LEFT && this.speed < 0) {
-            this.speed *= -1;
+        else {
+            this.sprite = 'images/backtracker-reverse.png';
+        } 
+    }
+    if (this.right() < X_LEFT - 2*X_STEP && this.speed < 0) {
+        this.speed *= -1;
+        if (gamestate.activeCheats.cow) {
             this.sprite = 'images/Cow.png';
         }
-    } else {
-        if (this.left() > X_RIGHT && this.speed > 0) {
-            this.speed *= -1;
-            this.sprite = 'images/backtracker-reverse.png';
-        }
-        if (this.right() < X_LEFT && this.speed < 0) {
-            this.speed *= -1;
+        else {
             this.sprite = 'images/backtracker.png';
         }
     }
 };
+
 Backtracker.prototype.backtrack = function () {
     var thisBacktracker = this;
+    var backtrackInterval = randInt(5000, 10000);
     setInterval(function () {
         var willBacktrack = Math.random();
         if (willBacktrack > 0.15) {
             thisBacktracker.speed *= -1;
-            if (gamestate.activeCheats.indexOf('cow') === -1) {
+            if (!gamestate.activeCheats.cow) {
                 if (thisBacktracker.speed > 0) {
                     thisBacktracker.sprite = 'images/backtracker.png';
                 } else {
@@ -272,7 +304,7 @@ Backtracker.prototype.backtrack = function () {
                 }
             }
         }
-    }, 5000)
+    }, backtrackInterval);
 };
 
 /**
@@ -282,7 +314,7 @@ Backtracker.prototype.backtrack = function () {
 var Slowpoke = function () {
     Enemy.call(this);
     this.sprite = 'images/slowpoke.png';
-    if (gamestate.activeCheats.indexOf('cow') !== -1) {
+    if (gamestate.activeCheats.cow) {
         this.sprite = 'images/Cow.png';
     }
     this.minSpeed = 15;
@@ -299,7 +331,7 @@ Slowpoke.prototype.constructor = Slowpoke;
 var Centipede = function () {
     Enemy.call(this);
     this.sprite = 'images/centipede.png';
-    if (gamestate.activeCheats.indexOf('cow') !== -1) {
+    if (gamestate.activeCheats.cow) {
         this.sprite = 'images/Cow-centipede.png';
     }
     this.width = 270;
@@ -315,7 +347,7 @@ Centipede.prototype.constructor = Centipede;
  */
 var Player = function () {
     this.width = 60;
-    this.height = 70;
+    this.height = 80;
     this.maxLives = 5;
     this.lives = 3;
     this.isInvincible = false;
@@ -326,7 +358,7 @@ var Player = function () {
 };
 Player.prototype.update = function () {};
 Player.prototype.render = function () {
-    if (gamestate.activeCheats.indexOf('udacity') !== -1) {
+    if (gamestate.activeCheats.udacity) {
         ctx.drawImage(Resources.get('images/Udacity.png'), this.x, this.y + 20);
     } else {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y - 20);
@@ -370,6 +402,20 @@ Player.prototype.move = function (direction) {
     if (direction === 'down') {
         newX = this.x;
         newY = this.y + Y_STEP;
+    }
+    if (gamestate.activeCheats.time) {
+        if (direction === 'left') {
+            newX += 2 * X_STEP;
+        }
+        if (direction === 'right') {
+            newX -= 2 * X_STEP;
+        }
+        if (direction === 'up') {
+            newY += 2 * Y_STEP;
+        }
+        if (direction === 'down') {
+            newY -= 2 * Y_STEP;
+        }
     }
     var onMap = false;
     map.tiles.forEach(function (tile) {
@@ -424,7 +470,7 @@ Player.prototype.handleInput = function (input) {
             if (input === 'command') {
                 this.enterCommand();
             }
-            if (gamestate.activeCheats.indexOf('hadouken') !== -1) {
+            if (gamestate.activeCheats.hadouken) {
                 if (input === 'leftAttack' || input === 'rightAttack') {
                     gamestate.hadouken = true;
                     setTimeout(function () {
@@ -433,7 +479,7 @@ Player.prototype.handleInput = function (input) {
                     allAttacks.push(new Hadouken(input));
                 }
             }
-            if (gamestate.activeCheats.indexOf('udacity') !== -1) {
+            if (gamestate.activeCheats.udacity) {
                 if (input === 'leftUdacity' || input === 'rightUdacity') {
                     allAttacks.push(new HTML(input));
                     allAttacks.push(new CSS(input));
@@ -597,8 +643,9 @@ Key.prototype.constructor = Key;
 
 var Gem = function (x, y) {
     Item.call(this, x, y);
-    this.spriteOptions = ['images/Gem Blue.png', 'images/Gem Green.png', 'images/Gem Orange.png'];
-    this.sprite = this.spriteOptions[Math.floor(Math.random() * this.spriteOptions.length)];
+    this.spriteOptions = ['images/Gem Blue.png', 'images/Gem Green.png', 
+                          'images/Gem Orange.png'];
+    this.sprite = choice(this.spriteOptions);
     this.fading = false;
     this.disappear();
 };
@@ -700,11 +747,11 @@ Rock.prototype.constructor = Rock;
 
 // Declare Entities
 var gamestate;
-var allEnemies;
-var player;
 var map;
-var allAttacks;
+var player;
+var allEnemies;
 var allItems;
+var allAttacks;
 var levelStartTime;
 var levelFinishTime;
 
@@ -734,7 +781,6 @@ document.addEventListener('keyup', function (e) {
     if (!player.godMode) {
         keys.push(e.keyCode);
         if (keys.toString().indexOf(secretCode) >= 0) {
-
             player.godMode = true;
             pauseAlert(unlockCheatsMessage);
             keys = [];
@@ -745,68 +791,82 @@ document.addEventListener('keyup', function (e) {
 
 // Game Dialog/Messages
 var deathMessage = "<h2>Crushed Like a Bug...</h2><hr><div class='text-left'>" +
-    "<p>...by a bug.  Wait, what!?</p>" +
-    "<p>How does that even happen?  I thought you were supposed to be the chosen one!</p>" +
+    "<p>...by a bug.  Wait, what!?</p><p>How does that even happen?  I " +
+    "thought you were supposed to be the chosen one!</p>" +
     "<p>And you're taken down by a bug?  Ok, we're doomed...'</p><br>" +
-    "<p><em>(Actually for all I know you drowned, because I'm lazy and didn't write " +
-    "more than one death dialog.  Heck, you could've even been run over by a " +
-    "<strong>Cow</strong>!  Wouldn't that be something?)</em></p></div>";
+    "<p><em>(Actually for all I know you drowned, because I'm lazy and " + 
+    "didn't write more than one death dialog.  Heck, you could've even been " +
+    "run over by a <strong>Cow</strong>! " +
+    "Wouldn't that be something?)</em></p></div>";
 
-var gameOverMessage = "<h2>The Prophecies Were Wrong...</h2><hr><p>...or I misinterpreted them" +
-    "...but never mind that.</p><p>Either way, not too great to be you (Steve) right " +
-    "now.  Well...if you want to try again and be not-terrible this time, feel free.</p><br>" +
-    "<h5 style='text-style:underline'>Your Stats</h5>" +
-    "<p style='text-align:center'>Level: <span id='finalLevel'>" +
-    "</span></p><p style='text-align:center'>Score: <span id='score'></span></p>";
+var gameOverMessage = "<h2>The Prophecies Were Wrong...</h2><hr><p>...or " +
+    "I misinterpreted them...but never mind that.</p><p>Either way, not " +
+    "too great to be you right now, Steve.  Well...if you want to try again " +
+    "and be not-terrible this time, feel free.</p><br><h5 " +
+    "style='text-style:underline'>Your Stats</h5><p style=" +
+    "'text-align:center'>Level: <span id='finalLevel'></span>" +
+    "</p><p style='text-align:center'>Score: <span id='score'></span></p>";
 
-var openingMessage = "<h2>Greetings Traveler!</h2><div class='text-left'><hr><p>What's your name, son?</p>" +
-    "<p>What was that?  Speak up, boy!  Eh, it doesn't matter.  It's entirely " +
-    "irrelevant to this game.</p><p>Anywho, the prophecies foretold an inexcplicably silent boy " +
-    "named...uhhhh...I don't know?  Steve?  <em>Steve?</em>  Yeah let's go with that.</p>" +
-    "<p>Like I was saying, this kid Steve was going to save our land from all these " +
-    "bugs running around all over the place, moving left to right...over and over. " +
-    "It's maddening!!</p><p>Huh, what's that!?  You want to know how you're supposed " +
-    "to save us?  Sorry Steve-o, prophecy wasn't so specific.  Though I'm thinkin' if " +
-    "you keep on grabbin' these keys...</p><img src='images/Key.png' alt='Key'>" +
-    "<p>And heading through these door...errr...rock...uhhhhh...rock-door dealies...</p>" +
-    "<img src='images/Door.png' alt='Door'><p>Everything's going to turn out ALLLLLLLRIGHT!!</p>" +
-    "<p>Now get going you fool!  We're all counting on you!</p></div>";
+var openingMessage = "<h2>Greetings Traveler!</h2><div class='text-left'>" +
+    "<hr><p>What's your name, son?</p><p>What was that?  Speak up, boy!  " +
+    "Eh, it doesn't matter.  It's entirely irrelevant to this game.</p>" +
+    "<p>Anywho, the prophecies foretold an inexcplicably silent boy " +
+    "named...uhhhh...I don't know?  Steve?  <em>Steve?</em>  Yeah let's go " +
+    "with that.</p><p>Like I was saying, this kid Steve was going to save " +
+    "our land from all these bugs running around all over the place, moving " +
+    "left to right...over and over.  It's maddening!!</p><p>Huh, what's " +
+    "that!?  You want to know how you're supposed to save us?  Sorry " +
+    "Steve-o, prophecy wasn't so specific.  Though I'm thinkin' if you keep " +
+    "on grabbin' these keys...</p><img src='images/Key.png' alt='Key'>" +
+    "<p>And heading through these door...errr...rock...uhhhhh...rock-door " +
+    "dealies...</p><img src='images/Door.png' alt='Door'><p>Everything's " +
+    "going to turn out ALLLLLLLRIGHT!!</p><p>Now get going you fool!  " +
+    "We're all counting on you!</p></div>";
 
-var instructionMessage = "<h2>Game: How to Play It</h2><hr><div class='text-left'><p>Now to move ole Stevie here, use these:</p>" +
-    "<img src='images/arrow_keys.png' alt='Arrow Keys'><p>Move him to the key like I showed you before, " +
-    "then get him to that there rock-door.  (And stay away from water.  Our friend Steve here can't swim.)</p>" +
-    "<p>The faster you complete a level, the more points you get! " +
-    "And you'll get even more points if you collect a <strong>Gem</strong> along the way!</p>" +
-    "<p>Keep on going as long as you can!</p><p>Also you can press <strong>P</strong> at any time to " +
-    "<strong>Pause</strong> the game.  Press <strong>Enter</strong> to resume play.</p></div>";
+var instructionMessage = "<h2>Game: How to Play It</h2><hr><div " +
+    "class='text-left'><p>Now to move ole Stevie here, use these:</p>" +
+    "<img src='images/arrow_keys.png' alt='Arrow Keys'>" +
+    "<p>Move him to the key like I showed you before, then get him to that " +
+    "there rock-door.  (And stay away from water.  Our friend Steve here " +
+    "can't swim.)</p><p>The faster you complete a level, the more points " +
+    "you get! And you'll get even more points if you collect a " +
+    "<strong>Gem</strong> along the way!</p><p>Keep on going as long as " +
+    "you can!</p><p>Also you can press <strong>P</strong> at any time to " +
+    "<strong>Pause</strong> the game.  Press <strong>Enter</strong> to " +
+    "resume play.</p></div>";
 
 var pauseMessage = "<h2>Game Paused</h2><hr><p style='text-align:center'>" +
     "Press <strong>Enter</strong> to resume.</p>";
 
-var unlockCheatsMessage = "<h4>You Have Pleased the Gods...</h4><hr><p>...with your little " +
-    "'up,up,down,down' dance!  They've bestowed their powers upon you!</p>" +
-    "<p>Now press </strong>C</strong> and your bidding will be done!</p>" +
-    "<p><em>(...or nothing will happen at all and you'll just look like a fool)</em></p>";
+var unlockCheatsMessage = "<h4>You Have Pleased the Gods...</h4><hr>" +
+    "<p>...with your little 'up,up,down,down' dance!  They've bestowed their " +
+    "powers upon you!</p><p>Now press </strong>C</strong> and your bidding " +
+    "will be done!</p><p><em>(...or nothing will happen at all and you'll " +
+    "just look like a fool)</em></p>";
 
 var commandMessage = "<h5>What is your bidding oh Great One?</h5>";
 
-var invincibleMessage = "<h2>Hey you're all blinky!  That's pretty cool!</h2><hr>" +
-    "<p style='text-align: center'>(PS. You're invincible now)</p>" +
-    "<p style='text-align: center'>(PSS. You still don't know how to swim...)</p>";
+var invincibleMessage = "<h2>Hey you're all blinky!  That's pretty cool!" +
+    "</h2><hr><p style='text-align: center'>(PS. You're invincible now)</p>" +
+    "<p style='text-align: center'>(PSS. You still don't know " +
+    "how to swim...)</p>";
 
 var cowMessage = "<h2><em>Mooooooooooooooooooooooooooo...</em></h2>";
 
-var udaciousMessage = "<h4>Hey, I think so too!  Glad you're enjoying it!</h4><hr>" +
-    "<p style='text-align:center'>Try pressing <strong>Q</strong> or <strong>E</strong>!";
+var udaciousMessage = "<h4>Hey, I think so too!  Glad you're enjoying it!" +
+    "</h4><hr><p style='text-align:center'>Try pressing <strong>Q</strong> " +
+    "or <strong>E</strong>!";
 
 var hadoukenMessage = "<h2>HADOUKEN!!!</h2><hr><p style='text-align:center'>" +
     "I'd recommend pressing <strong>A</strong> or <strong>D</strong></p>";
 
 var timeMachineMessage1 = "<h2>You Step Into The Time Machine...</h2><hr>" +
-    "<p>...hoping to go back in time and tell your past self to avoid this place " +
-    "so you'll never get roped into running around getting crushed by giant bugs repeatedly...</p>";
+    "<p>...hoping to go back in time and tell your past self to avoid this " +
+    "place so you'll never get roped into running around getting crushed by " +
+    "giant bugs repeatedly...</p>";
 
-var timeMachineMessage2 = "<p>...but something went very wrong.  Where are you?";
+var timeMachineMessage2 = "<p>...but something went very wrong. " +
+    "Where (when??) are you?</p>";
 
 var cheatMessages = {
     'there is no cow level': cowMessage,
