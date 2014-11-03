@@ -478,7 +478,7 @@ var Engine = (function (global) {
     /**
      * Function to create enemies for a level.  Number and type of enemies will
      * vary by the current level.
-     * @return {Array.<Object>} An array containing all enemies for athe level.
+     * @return {Array.<Object>} An array containing all enemies for the level.
      */
     function createEnemies() {
         // Array where all enemies will be stored.
