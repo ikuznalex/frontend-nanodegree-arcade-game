@@ -294,15 +294,20 @@ var Engine = (function (global) {
      */
     function setupNewLevel() {
         var secsToFinish = Math.floor(levelFinishTime - levelStartTime) / 1000;
+        var addToScore = Math.floor(100 - 4 * secsToFinish);
         // Update score (based on level completion time) and level.
         // If time machine cheat is active, score will be subtracted and level
         // will be displayed as a question mark.
         if (gamestate.activeCheats.time) {
-            gamestate.score -= Math.floor(100 - 4 * secsToFinish);
+            if (addToScore > 0) {
+                gamestate.score -= addToScore;
+            }
             gamestate.level -= 1;
             $("#level").html('?');
         } else {
-            gamestate.score += Math.floor(100 - 4 * secsToFinish);
+            if (addToScore > 0) {
+                gamestate.score += addToScore;
+            }
             gamestate.level += 1;
             $("#level").html(gamestate.level);
         }
