@@ -36,7 +36,7 @@ var inRange = function (value, min, max) {
     return false;
 };
 
-/** 
+/**
  * Function to calculate random integer between two numbers.
  * @param {number} min Minimum value.
  * @param {number} max Maximum value.
@@ -46,7 +46,7 @@ var randInt = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-/** 
+/**
  * Function that randomly chooses and returns an element from an array.
  * @param {Array.<?>} array An array
  * @return {?} Random element from array
@@ -55,7 +55,7 @@ var choice = function (array) {
     return array[Math.floor(Math.random() * array.length)];
 };
 
-/** 
+/**
  * Function that removes an element from an array by value.  If there are
  * multiple matching elements, the first one will be removed.
  * @param {?} element An element in an array.
@@ -68,7 +68,7 @@ var removeElement = function (element, array) {
     }
 };
 
-/** 
+/**
  * Pauses the game and brings up a dialog box.  Resumes the game when the
  * dialog box is closed.
  * @param {string} text Text to display in dialog box. (Can be html).
@@ -80,7 +80,7 @@ var pauseAlert = function (text) {
     });
 };
 
-/** 
+/**
  * Creates a list of elements that repeat based on the weights assigned to them.
  * This allows for certain elements to have a greater chance of being selected
  * when choosing a random element.
@@ -674,9 +674,9 @@ Player.prototype.handleInput = function (input) {
             }
             if (gamestate.activeCheats.hadouken) {
                 if (input === 'a' || input === 'd') {
-                    // gamestate.hadouken is used to let the renderHadouken 
-                    // function know if it should do anything.  "HADOUKEN!!!" 
-                    // should appear on the screen briefly above the player 
+                    // gamestate.hadouken is used to let the renderHadouken
+                    // function know if it should do anything.  "HADOUKEN!!!"
+                    // should appear on the screen briefly above the player
                     // every time they use the attack.
                     gamestate.hadouken = true;
                     setTimeout(function () {
@@ -712,7 +712,7 @@ Player.prototype.blink = function () {
 };
 
 
-/** 
+/**
  * An attack class that will destroy enemies when they collide.
  * Attacks will originate at the coordinates of the player.
  * This class is not used, but is the base for other attack subclasses.
@@ -778,7 +778,7 @@ Attack.prototype.bottom = function () {
     return this.y + this.height;
 };
 
-/** 
+/**
  * Hadouken attack from Street Fighter!  Player can use this attack
  * after enabling the Street Fighter cheat.
  * @constructor
@@ -801,7 +801,7 @@ var Hadouken = function (input) {
 Hadouken.prototype = Object.create(Attack.prototype);
 Hadouken.prototype.constructor = Hadouken;
 
-/** 
+/**
  * Attack using the powers of Front-End Web Development! (HTML, CSS, JavaScript)
  * Similar to Hadouken but hits 3 rows of enemies!
  * @constructor
@@ -829,7 +829,7 @@ var FrontEndAttack = function (input) {
 FrontEndAttack.prototype = Object.create(Attack.prototype);
 FrontEndAttack.prototype.constructor = FrontEndAttack;
 
-/** 
+/**
  * Items for the player to collect!  This class is not used but is the base
  * for all item subclasses.
  * @constructor
@@ -857,7 +857,7 @@ Item.prototype.update = function () {
     // Does nothing for now.
 };
 
-/** 
+/**
  * When the player collects this item, they will gain one life.
  * @constructor
  * @extends Item
@@ -872,7 +872,7 @@ var Heart = function (x, y) {
 Heart.prototype = Object.create(Item.prototype);
 Heart.prototype.constructor = Heart;
 
-/** 
+/**
  * When the player collects this item, the player's hasKey property will be set
  * to true.  This will enable the player to move the the level's door and
  * continue to the next level.
@@ -889,7 +889,7 @@ var Key = function (x, y) {
 Key.prototype = Object.create(Item.prototype);
 Key.prototype.constructor = Key;
 
-/** 
+/**
  * When the player collects this item, the score increases.  This item will
  * only exist on a level for a set time, then it will disappear.
  * @constructor
@@ -909,7 +909,7 @@ var Gem = function (x, y) {
 Gem.prototype = Object.create(Item.prototype);
 Gem.prototype.constructor = Gem;
 
-/** 
+/**
  * Draws gem's sprite on screen.  Opacity is reduced if gem's fading property
  * is set to true.
  */
@@ -922,7 +922,7 @@ Gem.prototype.render = function () {
     ctx.globalAlpha = 1;
 };
 
-/** 
+/**
  * Starts two timers.  After first timer ends, the gem will fade.  After the
  * second the gem will be destroyed (removed from allItems).
  */
@@ -941,7 +941,7 @@ Gem.prototype.disappear = function () {
 // Note: MapTiles don't necessarily need to be Classes but I found it to be a
 // clean way to check if a player is on water.  That's why MapTile is a class,
 // Grass and Stone are subclasses, even though they don't really do anything.
-/** 
+/**
  * Tiles that make up the game map.  This class isn't used, but is the base
  * for all MapTile subclasses.
  * @constructor
@@ -960,7 +960,7 @@ MapTile.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-/** 
+/**
  * A tile with a grass sprite.
  * @constructor
  * @extends MapTile
@@ -976,7 +976,7 @@ var Grass = function (x, y) {
 Grass.prototype = Object.create(MapTile.prototype);
 Grass.prototype.constructor = Grass;
 
-/** 
+/**
  * A tile with a stone sprite.
  * @constructor
  * @extends MapTile
@@ -992,7 +992,7 @@ var Stone = function (x, y) {
 Stone.prototype = Object.create(MapTile.prototype);
 Stone.prototype.constructor = Stone;
 
-/** 
+/**
  * A tile with a water sprite.
  * @constructor
  * @extends MapTile
@@ -1008,7 +1008,7 @@ var Water = function (x, y) {
 Water.prototype = Object.create(MapTile.prototype);
 Water.prototype.constructor = Water;
 
-/** 
+/**
  * Objects or important points placed on the map, that can't be collected
  * like items.
  * @constructor
@@ -1027,7 +1027,7 @@ MapObject.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y - 20);
 };
 
-/** 
+/**
  * A map object that determines where the player starts on the map.
  * @constructor
  * @extends MapObject
@@ -1042,7 +1042,7 @@ var StartPoint = function (x, y) {
 StartPoint.prototype = Object.create(MapObject.prototype);
 StartPoint.prototype.constructor = StartPoint;
 
-/** 
+/**
  * The door or end point on a map.  The player needs a key to move through it.
  * @constructor
  * @extends MapObject
@@ -1057,7 +1057,7 @@ var Door = function (x, y) {
 Door.prototype = Object.create(MapObject.prototype);
 Door.prototype.constructor = Door;
 
-/** 
+/**
  * A rock that blocks the way.  Players can't move on tiles that have a rock
  * on them.
  * @constructor
