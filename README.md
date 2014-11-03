@@ -1,6 +1,6 @@
 # Frogger (Clone): The Buggening!
 
-This is my take on the class arcade game, Frogger.  In the game you'll control this guy.  
+This is my take on the classic arcade game, Frogger.  In the game you'll control this guy.  
 ![Steve](images/char-boy.png)  
 His name is **Steve**.  You'll use the **arrow keys**...  
 
@@ -28,7 +28,7 @@ And keep in mind you can't move onto tiles with **rocks** on them.
 
 There's no end to the game!  Just see how far you can get and how high you can keep your score!  As the levels progress the number of enemies will increase and different types of enemies will be introduced!
 
-At any time you can press **P** to pause the game.  Press **Enter** or close the dialog box to resume play 
+At any time you can press **P** to pause the game.  Press **Enter** or close the dialog box to resume play.  
 
 And that's about it!  Use the **arrow keys** to move Steve and press **P** if you want to pause.
 
