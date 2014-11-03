@@ -257,7 +257,7 @@ var Engine = (function (global) {
      * Helper function for checkAllCollisions.  Checks if one entity's left edge
      * or right edge is between the other entity's left and right edge.  If
      * that's true and the first entity's top or bottom edge is between the
-     * other entity's top and bottom edges, then there is a collision and 
+     * other entity's top and bottom edges, then there is a collision and
      * returns true.  Otherwise returns false.
      * @return {boolean}
      */

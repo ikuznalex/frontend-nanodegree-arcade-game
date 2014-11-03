@@ -287,7 +287,7 @@ Charger.prototype.constructor = Charger;
 
 /**
  * This method will set an interval for this enemy to "flip a coin" (produce
- * a random number) to see if it will charge.  If this enemy charges, its 
+ * a random number) to see if it will charge.  If this enemy charges, its
  * speed increases to 700 for half a second, then returns to its orginal speed.
  */
 Charger.prototype.charging = function () {
@@ -350,8 +350,8 @@ Sidestepper.prototype.sidestep = function () {
             // (where the player starts) by moving down.
             if (upOrDown >= 0.5 && thisSidestepper.y < Y_BOTTOM - 2 * Y_STEP) {
                 thisSidestepper.y += Y_STEP;
-            // Make sure this enemy won't be moving into the top row
-            // (with the end point) by moving up.
+                // Make sure this enemy won't be moving into the top row
+                // (with the end point) by moving up.
             } else if (upOrDown < 0.5 && thisSidestepper.y > Y_TOP + Y_STEP) {
                 thisSidestepper.y -= Y_STEP;
             }
@@ -555,12 +555,12 @@ Player.prototype.bottom = function () {
 };
 
 /**
-* Method to change the position of the player based on the user's keyboard
-* input.
-* @param {string} direction The string corresponding to the keystroke event
-*     keycode in the allowedKeys Object.  The direction will be the direction
-*     of the arrow key.
-*/
+ * Method to change the position of the player based on the user's keyboard
+ * input.
+ * @param {string} direction The string corresponding to the keystroke event
+ *     keycode in the allowedKeys Object.  The direction will be the direction
+ *     of the arrow key.
+ */
 Player.prototype.move = function (direction) {
     // Set new coordinates equal to current coordinates.
     var newX = this.x;
@@ -657,7 +657,7 @@ Player.prototype.enterCommand = function () {
  * A method to let the user manipulate the player using the keyboard.  Different
  * keys activate different player actions.
  * @param {string} input The string corresponding to the keystroke event keycode
- *     in the allowedKeys Object.  
+ *     in the allowedKeys Object.
  */
 Player.prototype.handleInput = function (input) {
     if (!gamestate.paused) {
@@ -803,7 +803,7 @@ Hadouken.prototype.constructor = Hadouken;
 
 /** 
  * Attack using the powers of Front-End Web Development! (HTML, CSS, JavaScript)
- * Similar to Hadouken but hits 3 rows of enemies! 
+ * Similar to Hadouken but hits 3 rows of enemies!
  * @constructor
  * @extends Attack
  * @param {string} input The string corresponding to the keystroke
@@ -830,12 +830,12 @@ FrontEndAttack.prototype = Object.create(Attack.prototype);
 FrontEndAttack.prototype.constructor = FrontEndAttack;
 
 /** 
-* Items for the player to collect!  This class is not used but is the base
-* for all item subclasses.
-* @constructor
-* @param {number} x x-position of item.
-* @param {number} y y-position of item. 
-*/
+ * Items for the player to collect!  This class is not used but is the base
+ * for all item subclasses.
+ * @constructor
+ * @param {number} x x-position of item.
+ * @param {number} y y-position of item.
+ */
 var Item = function (x, y) {
     this.x = x;
     this.y = y;
@@ -858,12 +858,12 @@ Item.prototype.update = function () {
 };
 
 /** 
-* When the player collects this item, they will gain one life.
-* @constructor
-* @extends Item
-* @param {number} x x-position of item.
-* @param {number} y y-position of item. 
-*/
+ * When the player collects this item, they will gain one life.
+ * @constructor
+ * @extends Item
+ * @param {number} x x-position of item.
+ * @param {number} y y-position of item.
+ */
 var Heart = function (x, y) {
     Item.call(this, x, y);
     this.sprite = 'images/Heart.png';
@@ -873,14 +873,14 @@ Heart.prototype = Object.create(Item.prototype);
 Heart.prototype.constructor = Heart;
 
 /** 
-* When the player collects this item, the player's hasKey property will be set
-* to true.  This will enable the player to move the the level's door and
-* continue to the next level.
-* @constructor
-* @extends Item
-* @param {number} x x-position of item.
-* @param {number} y y-position of item. 
-*/
+ * When the player collects this item, the player's hasKey property will be set
+ * to true.  This will enable the player to move the the level's door and
+ * continue to the next level.
+ * @constructor
+ * @extends Item
+ * @param {number} x x-position of item.
+ * @param {number} y y-position of item.
+ */
 var Key = function (x, y) {
     Item.call(this, x, y);
     this.sprite = 'images/Key.png';
@@ -890,13 +890,13 @@ Key.prototype = Object.create(Item.prototype);
 Key.prototype.constructor = Key;
 
 /** 
-* When the player collects this item, the score increases.  This item will
-* only exist on a level for a set time, then it will disappear.
-* @constructor
-* @extends Item
-* @param {number} x x-position of item.
-* @param {number} y y-position of item. 
-*/
+ * When the player collects this item, the score increases.  This item will
+ * only exist on a level for a set time, then it will disappear.
+ * @constructor
+ * @extends Item
+ * @param {number} x x-position of item.
+ * @param {number} y y-position of item.
+ */
 var Gem = function (x, y) {
     Item.call(this, x, y);
     this.spriteOptions = ['images/Gem Blue.png', 'images/Gem Green.png',
@@ -910,9 +910,9 @@ Gem.prototype = Object.create(Item.prototype);
 Gem.prototype.constructor = Gem;
 
 /** 
-* Draws gem's sprite on screen.  Opacity is reduced if gem's fading property
-* is set to true.
-*/
+ * Draws gem's sprite on screen.  Opacity is reduced if gem's fading property
+ * is set to true.
+ */
 Gem.prototype.render = function () {
     if (this.fading) {
         ctx.globalAlpha = 0.5;
@@ -923,9 +923,9 @@ Gem.prototype.render = function () {
 };
 
 /** 
-* Starts two timers.  After first timer ends, the gem will fade.  After the
-* second the gem will be destroyed (removed from allItems).
-*/
+ * Starts two timers.  After first timer ends, the gem will fade.  After the
+ * second the gem will be destroyed (removed from allItems).
+ */
 Gem.prototype.disappear = function () {
     var thisGem = this;
     var fadeTime = 2500;
@@ -942,29 +942,29 @@ Gem.prototype.disappear = function () {
 // clean way to check if a player is on water.  That's why MapTile is a class,
 // Grass and Stone are subclasses, even though they don't really do anything.
 /** 
-* Tiles that make up the game map.  This class isn't used, but is the base
-* for all MapTile subclasses.
-* @constructor
-* @param {number} x x-position of tile.
-* @param {number} y y-position of tile.
-*/
+ * Tiles that make up the game map.  This class isn't used, but is the base
+ * for all MapTile subclasses.
+ * @constructor
+ * @param {number} x x-position of tile.
+ * @param {number} y y-position of tile.
+ */
 var MapTile = function (x, y) {
     this.x = x;
     this.y = y;
 };
 
 /**
-* Draws MapTile sprite on the screen.
-*/
+ * Draws MapTile sprite on the screen.
+ */
 MapTile.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 /** 
-* A tile with a grass sprite.
-* @constructor
-* @extends MapTile
-*/
+ * A tile with a grass sprite.
+ * @constructor
+ * @extends MapTile
+ */
 var Grass = function (x, y) {
     MapTile.call(this, x, y);
     this.sprite = 'images/grass-block.png';
@@ -977,10 +977,10 @@ Grass.prototype = Object.create(MapTile.prototype);
 Grass.prototype.constructor = Grass;
 
 /** 
-* A tile with a stone sprite.
-* @constructor
-* @extends MapTile
-*/
+ * A tile with a stone sprite.
+ * @constructor
+ * @extends MapTile
+ */
 var Stone = function (x, y) {
     MapTile.call(this, x, y);
     this.sprite = 'images/stone-block.png';
@@ -993,10 +993,10 @@ Stone.prototype = Object.create(MapTile.prototype);
 Stone.prototype.constructor = Stone;
 
 /** 
-* A tile with a water sprite.  
-* @constructor
-* @extends MapTile
-*/
+ * A tile with a water sprite.
+ * @constructor
+ * @extends MapTile
+ */
 var Water = function (x, y) {
     MapTile.call(this, x, y);
     this.sprite = 'images/water-block.png';
@@ -1009,31 +1009,31 @@ Water.prototype = Object.create(MapTile.prototype);
 Water.prototype.constructor = Water;
 
 /** 
-* Objects or important points placed on the map, that can't be collected 
-* like items.
-* @constructor
-* @param {number} x x-position of map object.
-* @param {number} y y-position of map object.
-*/
+ * Objects or important points placed on the map, that can't be collected
+ * like items.
+ * @constructor
+ * @param {number} x x-position of map object.
+ * @param {number} y y-position of map object.
+ */
 var MapObject = function (x, y) {
     this.x = x;
     this.y = y;
 };
 
 /**
-* Draws map object on the screen.
-*/
+ * Draws map object on the screen.
+ */
 MapObject.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y - 20);
 };
 
 /** 
-* A map object that determines where the player starts on the map.
-* @constructor
-* @extends MapObject
-* @param {number} x x-position of map object.
-* @param {number} y y-position of map object.
-*/
+ * A map object that determines where the player starts on the map.
+ * @constructor
+ * @extends MapObject
+ * @param {number} x x-position of map object.
+ * @param {number} y y-position of map object.
+ */
 var StartPoint = function (x, y) {
     MapObject.call(this, x, y);
     this.sprite = 'images/nothing.png';
@@ -1043,12 +1043,12 @@ StartPoint.prototype = Object.create(MapObject.prototype);
 StartPoint.prototype.constructor = StartPoint;
 
 /** 
-* The door or end point on a map.  The player needs a key to move through it.
-* @constructor
-* @extends MapObject
-* @param {number} x x-position of map object.
-* @param {number} y y-position of map object.
-*/
+ * The door or end point on a map.  The player needs a key to move through it.
+ * @constructor
+ * @extends MapObject
+ * @param {number} x x-position of map object.
+ * @param {number} y y-position of map object.
+ */
 var Door = function (x, y) {
     MapObject.call(this, x, y);
     this.sprite = 'images/Door.png';
@@ -1058,13 +1058,13 @@ Door.prototype = Object.create(MapObject.prototype);
 Door.prototype.constructor = Door;
 
 /** 
-* A rock that blocks the way.  Players can't move on tiles that have a rock
-* on them.
-* @constructor
-* @extends MapObject
-* @param {number} x x-position of map object.
-* @param {number} y y-position of map object.
-*/
+ * A rock that blocks the way.  Players can't move on tiles that have a rock
+ * on them.
+ * @constructor
+ * @extends MapObject
+ * @param {number} x x-position of map object.
+ * @param {number} y y-position of map object.
+ */
 var Rock = function (x, y) {
     MapObject.call(this, x, y);
     this.sprite = 'images/Rock.png';
@@ -1192,7 +1192,7 @@ var timeMachineMessage1 = "<h2>You Step Into The Time Machine...</h2><hr>" +
     "past self to avoid this place so you'll never get roped into running " +
     "around getting crushed by giant bugs repeatedly...</p></div>";
 
-var timeMachineMessage2 = "<div class='text-left'<<p>...but something went" + 
+var timeMachineMessage2 = "<div class='text-left'<<p>...but something went" +
     "very wrong. Where (when??) are you?</p></div>";
 
 /**
