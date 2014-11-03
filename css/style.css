@@ -1,27 +1,7 @@
-* {
-  color: black !important;
-  font-family: "Press Start 2P", "cursive" !important; 
-}
-
 body {
+  font-family: "Press Start 2P", "cursive"; 
   text-align: center;
-}
-
-.modal-dialog {
-  width: 80%;
-  max-width: 960px;
-  margin: 0 auto;
-}
-
-.modal-body {
-  max-height: 600px;
-  overflow: scroll;
-}
-
-img {
-  margin: 0 auto;
-  display: block;
-  padding-bottom: 30px;
+  color: black;
 }
 
 h1 {
@@ -34,9 +14,27 @@ h2 {
 
 p {
   font-size: 12px;
-  text-align: left;
+}
+
+img {
+  margin: 0 auto;
+  display: block;
+  padding-bottom: 30px;
 }
 
 hr {
   border: 5px solid black;
+}
+
+.modal-dialog {
+  color: black;
+  width: 80%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.modal-body {
+  color: black;
+  max-height: 600px;
+  overflow: scroll;
 }

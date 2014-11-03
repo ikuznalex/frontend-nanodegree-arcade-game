@@ -136,7 +136,7 @@ var cheats = {
     },
     'Hot tub time machine': function () {
         bootbox.alert(timeMachineMessage1, function () {
-            $('#title').html('HUH???');
+            $('#page-header').html('HUH???');
             gamestate.activeCheats.time = true;
             gamestate.level = -1;
             $('#level').html('?');
@@ -1163,38 +1163,37 @@ var instructionMessage = "<h2>Game: How to Play It</h2><hr><div " +
     "<strong>Pause</strong> the game.  Press <strong>Enter</strong> to " +
     "resume play.</p></div>";
 
-var pauseMessage = "<h2>Game Paused</h2><hr><p style='text-align:center'>" +
+var pauseMessage = "<h2>Game Paused</h2><hr><p>" +
     "Press <strong>Enter</strong> to resume.</p>";
 
 var unlockCheatsMessage = "<h4>You Have Pleased the Gods...</h4><hr>" +
-    "<p>...with your little 'up,up,down,down' dance!  They've bestowed their " +
-    "powers upon you!</p><p>Now press </strong>C</strong> and your bidding " +
-    "will be done!</p><p><em>(...or nothing will happen at all and you'll " +
-    "just look like a fool)</em></p>";
+    "<div class='text-left'><p>...with your little 'up,up,down,down' dance! " +
+    "They've bestowed their powers upon you!</p><p>Now press " +
+    "</strong>C</strong> and your bidding will be done!</p><p><em>(...or " +
+    "nothing will happen at all and you'll just look like a fool)</em></p>" +
+    "</div>";
 
 var commandMessage = "<h5>What is your bidding oh Great One?</h5>";
 
 var invincibleMessage = "<h2>Hey you're all blinky!  That's pretty cool!" +
-    "</h2><hr><p style='text-align: center'>(PS. You're invincible now)</p>" +
-    "<p style='text-align: center'>(PSS. You still don't know " +
-    "how to swim...)</p>";
+    "</h2><hr><p>(P.S. You're invincible now)</p>" +
+    "<p>(P.S.S. You still don't know how to swim...)</p>";
 
 var cowMessage = "<h2><em>Mooooooooooooooooooooooooooo...</em></h2>";
 
 var udaciousMessage = "<h4>Hey, I think so too!  Glad you're enjoying it!" +
-    "</h4><hr><p style='text-align:center'>Try pressing <strong>Q</strong> " +
-    "or <strong>E</strong>!";
+    "</h4><hr><p>Try pressing <strong>Q</strong> or <strong>E</strong>!";
 
-var hadoukenMessage = "<h2>HADOUKEN!!!</h2><hr><p style='text-align:center'>" +
+var hadoukenMessage = "<h2>HADOUKEN!!!</h2><hr><p>" +
     "I'd recommend pressing <strong>A</strong> or <strong>D</strong></p>";
 
 var timeMachineMessage1 = "<h2>You Step Into The Time Machine...</h2><hr>" +
-    "<p>...hoping to go back in time and tell your past self to avoid this " +
-    "place so you'll never get roped into running around getting crushed by " +
-    "giant bugs repeatedly...</p>";
+    "<div class='text-left'><p>...hoping to go back in time and tell your " +
+    "past self to avoid this place so you'll never get roped into running " +
+    "around getting crushed by giant bugs repeatedly...</p></div>";
 
-var timeMachineMessage2 = "<p>...but something went very wrong. " +
-    "Where (when??) are you?</p>";
+var timeMachineMessage2 = "<div class='text-left'<<p>...but something went" + 
+    "very wrong. Where (when??) are you?</p></div>";
 
 /**
  * Object mapping cheat codes to game dialog so the appropriate message will

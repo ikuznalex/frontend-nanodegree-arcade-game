@@ -330,7 +330,7 @@ var Engine = (function (global) {
      */
     function resetGame() {
         // Update page header in case it was changed by the time machine cheat.
-        $('#title').html('Frogger (Clone): The Buggening!');
+        $('#page-header').html('Frogger (Clone): The Buggening!');
         var levelAchieved = gamestate.level;
         var pointsEarned = gamestate.score;
         gamestate = new GameState();
