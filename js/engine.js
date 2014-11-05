@@ -566,21 +566,25 @@ var Engine = (function (global) {
         var items = [];
         // Array that will store all possible locations an item could be placed.
         var itemCoords = [];
-        var onRock;
+        var nearRock;
         // Loop through all map tiles and filter out ones that items shouldn't
         // be placed on.
         map.tiles.forEach(function (tile) {
-            onRock = false;
+            nearRock = false;
             // Don't put items on water or the map start or end point.
             if ((!(tile instanceof Water)) && (tile.x !== map.start.x ||
                 tile.y !== map.start.y) && (tile.x !== map.end.x ||
                 tile.y !== map.end.y)) {
                 map.rocks.forEach(function (rock) {
-                    if (tile.x === rock.x && tile.y === rock.y) {
-                        onRock = true;
+                    if (tile.x <= rock.x + X_STEP &&
+                        tile.x >= rock.x - X_STEP) {
+                        if (tile.y <= rock.y + Y_STEP &&
+                            tile.y >= rock.y - Y_STEP) {
+                            nearRock = true;
+                        }
                     }
                 });
-                if (!onRock) {
+                if (!nearRock) {
                     // It's ok for an item to be placed here.  Add coordinates
                     // to itemCoords array.
                     itemCoords.push([tile.x, tile.y]);
