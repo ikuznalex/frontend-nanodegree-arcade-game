@@ -1192,7 +1192,7 @@ var timeMachineMessage1 = "<h2>You Step Into The Time Machine...</h2><hr>" +
     "past self to avoid this place so you'll never get roped into running " +
     "around getting crushed by giant bugs repeatedly...</p></div>";
 
-var timeMachineMessage2 = "<div class='text-left'<<p>...but something went" +
+var timeMachineMessage2 = "<div class='text-left'<<p>...but something went " +
     "very wrong. Where (when??) are you?</p></div>";
 
 /**
