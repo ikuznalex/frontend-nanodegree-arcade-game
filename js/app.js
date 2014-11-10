@@ -1138,7 +1138,7 @@ var gameOverMessage = "<h2>The Prophecies Were Wrong...</h2><hr><p>...or " +
 var openingMessage = "<h2>Greetings Traveler!</h2><div class='text-left'>" +
     "<hr><p>What's your name, son?</p><p>What was that?  Speak up, boy!  " +
     "Eh, it doesn't matter.  It's entirely irrelevant to this game.</p>" +
-    "<p>Anywho, the prophecies foretold an inexcplicably silent boy " +
+    "<p>Anywho, the prophecies foretold an inexplicably silent boy " +
     "named...uhhhh...I don't know?  Steve?  <em>Steve?</em>  Yeah let's go " +
     "with that.</p><p>Like I was saying, this kid Steve was going to save " +
     "our land from all these bugs running around all over the place, moving " +
