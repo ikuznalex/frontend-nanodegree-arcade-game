@@ -141,14 +141,14 @@ var Engine = (function (global) {
      * Draws the player, all enemies, all items, and all attacks on the screen.
      */
     function renderEntities() {
-        allEnemies.forEach(function (enemy) {
-            enemy.render();
-        });
         allItems.forEach(function (item) {
             item.render();
         });
         allAttacks.forEach(function (attack) {
             attack.render();
+        });
+        allEnemies.forEach(function (enemy) {
+            enemy.render();
         });
         player.render();
     }
