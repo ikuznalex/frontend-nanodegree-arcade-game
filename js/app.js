@@ -479,6 +479,7 @@ var Slowpoke = function () {
     }
     this.minSpeed = 15;
     this.maxSpeed = 25;
+    this.setSpeed();
 };
 
 Slowpoke.prototype = Object.create(Enemy.prototype);
