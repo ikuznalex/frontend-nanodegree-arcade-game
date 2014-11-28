@@ -323,6 +323,8 @@ Charger.prototype.charging = function () {
  */
 var Sidestepper = function () {
     Enemy.call(this);
+    this.sideStepSpeed = 0;
+    this.newY = this.y;
     this.sprite = 'images/sidestepper.png';
     if (gamestate.activeCheats.cow) {
         this.sprite = 'images/Cow.png';
@@ -331,6 +333,25 @@ var Sidestepper = function () {
 };
 Sidestepper.prototype = Object.create(Enemy.prototype);
 Sidestepper.prototype.constructor = Sidestepper;
+
+/**
+ * Same as enemy update method but will move the sidestepper up or down
+ * if it has a non-zero value for its sideStepSpeed property and it hasn't
+ * reached its new row yet.
+ * @param {number} dt Time between each execution of main function.
+ */
+Sidestepper.prototype.update = function (dt) {
+    Enemy.prototype.update.call(this, dt);
+    if (!gamestate.paused) {
+        this.y += dt * this.sideStepSpeed * gamestate.speed;
+        // If this sidestepper has reached or passed its target row,
+        // set it's y-position to the target row and stop its y-movement.
+        if (this.sideStepSpeed > 0 && this.y > this.newY || this.sideStepSpeed < 0 && this.y < this.newY) {
+            this.y = this.newY;
+            this.sideStepSpeed = 0;
+        }
+    }
+};
 
 /**
  * This method will set an interval for this enemy to "flip a coin" (produce
@@ -342,18 +363,21 @@ Sidestepper.prototype.sidestep = function () {
     // thisSidestepper is used to access this inside the setInterval function.
     var thisSidestepper = this;
     var steppingInterval = randInt(1000, 3000);
+    var newY;
     setInterval(function () {
         var willStep = Math.random();
-        if (willStep > 0.3) {
+        if (willStep > 0.3 && thisSidestepper.sideStepSpeed === 0) {
             var upOrDown = Math.random();
             // Make sure this enemy won't be moving into the bottom row
             // (where the player starts) by moving down.
             if (upOrDown >= 0.5 && thisSidestepper.y < Y_BOTTOM - 2 * Y_STEP) {
-                thisSidestepper.y += Y_STEP;
+                thisSidestepper.newY = thisSidestepper.y + Y_STEP;
+                thisSidestepper.sideStepSpeed = 100;
                 // Make sure this enemy won't be moving into the top row
                 // (with the end point) by moving up.
             } else if (upOrDown < 0.5 && thisSidestepper.y > Y_TOP + Y_STEP) {
-                thisSidestepper.y -= Y_STEP;
+                thisSidestepper.newY = thisSidestepper.y - Y_STEP;
+                thisSidestepper.sideStepSpeed = -100;
             }
         }
     }, steppingInterval)
