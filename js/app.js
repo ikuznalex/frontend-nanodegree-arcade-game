@@ -291,9 +291,9 @@ Charger.prototype.constructor = Charger;
  * speed increases to 700 for half a second, then returns to its orginal speed.
  */
 Charger.prototype.charging = function () {
-    // thisCharger is used so access this inside the setInterval function.
-    var thisCharger = this;
-    var originalSpeed = thisCharger.speed;
+    // self is used so access this inside the setInterval function.
+    var self = this;
+    var originalSpeed = self.speed;
     var chargingInterval = randInt(2000, 5000);
     setInterval(function () {
         var willCharge = Math.random();
@@ -301,15 +301,15 @@ Charger.prototype.charging = function () {
             // If "cow level" cheat is not active, change sprite
             // to charging version.
             if (!gamestate.activeCheats.cow) {
-                thisCharger.sprite = 'images/charger-charging.png';
+                self.sprite = 'images/charger-charging.png';
             }
-            thisCharger.speed = 700;
+            self.speed = 700;
             setTimeout(function () {
-                thisCharger.speed = originalSpeed;
+                self.speed = originalSpeed;
                 // If "cow level" cheat is not active, change sprite back
                 // to original sprite.
                 if (!gamestate.activeCheats.cow) {
-                    thisCharger.sprite = 'images/charger.png';
+                    self.sprite = 'images/charger.png';
                 }
             }, 500);
         }
@@ -360,24 +360,24 @@ Sidestepper.prototype.update = function (dt) {
  * down.
  */
 Sidestepper.prototype.sidestep = function () {
-    // thisSidestepper is used to access this inside the setInterval function.
-    var thisSidestepper = this;
+    // self is used to access this inside the setInterval function.
+    var self = this;
     var steppingInterval = randInt(1000, 3000);
     var newY;
     setInterval(function () {
         var willStep = Math.random();
-        if (willStep > 0.3 && thisSidestepper.sideStepSpeed === 0) {
+        if (willStep > 0.3 && self.sideStepSpeed === 0) {
             var upOrDown = Math.random();
             // Make sure this enemy won't be moving into the bottom row
             // (where the player starts) by moving down.
-            if (upOrDown >= 0.5 && thisSidestepper.y < Y_BOTTOM - 2 * Y_STEP) {
-                thisSidestepper.newY = thisSidestepper.y + Y_STEP;
-                thisSidestepper.sideStepSpeed = 100;
+            if (upOrDown >= 0.5 && self.y < Y_BOTTOM - 2 * Y_STEP) {
+                self.newY = self.y + Y_STEP;
+                self.sideStepSpeed = 100;
                 // Make sure this enemy won't be moving into the top row
                 // (with the end point) by moving up.
-            } else if (upOrDown < 0.5 && thisSidestepper.y > Y_TOP + Y_STEP) {
-                thisSidestepper.newY = thisSidestepper.y - Y_STEP;
-                thisSidestepper.sideStepSpeed = -100;
+            } else if (upOrDown < 0.5 && self.y > Y_TOP + Y_STEP) {
+                self.newY = self.y - Y_STEP;
+                self.sideStepSpeed = -100;
             }
         }
     }, steppingInterval)
@@ -439,27 +439,27 @@ Backtracker.prototype.update = function (dt) {
  * direction.
  */
 Backtracker.prototype.backtrack = function () {
-    // thisBacktracker is used to access this inside the setInterval function.
-    var thisBacktracker = this;
+    // self is used to access this inside the setInterval function.
+    var self = this;
     var backtrackInterval = randInt(5000, 10000);
     setInterval(function () {
         var willBacktrack = Math.random();
         if (willBacktrack > 0.2) {
-            thisBacktracker.speed *= -1;
+            self.speed *= -1;
             if (!gamestate.activeCheats.cow) {
                 // Flip to appropriate sprite based on this enemy's movement
                 // (assuming cow cheat is not active)
-                if (thisBacktracker.speed > 0) {
-                    thisBacktracker.sprite = 'images/backtracker.png';
+                if (self.speed > 0) {
+                    self.sprite = 'images/backtracker.png';
                 } else {
-                    thisBacktracker.sprite = 'images/backtracker-reverse.png';
+                    self.sprite = 'images/backtracker-reverse.png';
                 }
             } else {
                 // Flip to appropriate cow sprite based on this enemy's movement
-                if (thisBacktracker.speed > 0) {
-                    thisBacktracker.sprite = 'images/Cow.png';
+                if (self.speed > 0) {
+                    self.sprite = 'images/Cow.png';
                 } else {
-                    thisBacktracker.sprite = 'images/Cow-reverse.png';
+                    self.sprite = 'images/Cow-reverse.png';
                 }
             }
         }
