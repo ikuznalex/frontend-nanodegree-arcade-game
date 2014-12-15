@@ -532,6 +532,10 @@ Player.prototype.render = function () {
         ctx.drawImage(Resources.get('images/Udacity.png'), this.x, this.y + 20);
     } else {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y - 20);
+        if (this.hasKey) {
+            ctx.drawImage(Resources.get('images/Key-Small.png'),
+                          this.x + 15, this.y + 70);
+        }
     }
 };
 
@@ -724,14 +728,14 @@ Player.prototype.handleInput = function (input) {
  * Used when player enables invincibility cheat.
  */
 Player.prototype.blink = function () {
-    var thisPlayer = this;
+    var self = this;
     setInterval(function () {
-        thisPlayer.sprite = 'images/char-boy-blink1.png';
+        self.sprite = 'images/char-boy-blink1.png';
         setTimeout(function () {
-            thisPlayer.sprite = 'images/char-boy-blink2.png';
+            self.sprite = 'images/char-boy-blink2.png';
         }, 100);
         setTimeout(function () {
-            thisPlayer.sprite = 'images/char-boy-blink3.png';
+            self.sprite = 'images/char-boy-blink3.png';
         }, 200);
     }, 300);
 };

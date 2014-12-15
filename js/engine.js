@@ -188,7 +188,6 @@ var Engine = (function (global) {
      */
     function renderHadouken() {
         if (gamestate.hadouken) {
-            console.log('hadouken');
             ctx.font = "60px bold Arial";
             ctx.fillStyle = '#00a7ff';
             ctx.textAlign = 'center';
@@ -646,6 +645,7 @@ var Engine = (function (global) {
         'images/Gem Orange.png',
         'images/Rock.png',
         'images/Key.png',
+        'images/Key-Small.png',
         'images/Door.png',
         'images/char-boy-blink1.png',
         'images/char-boy-blink2.png',
