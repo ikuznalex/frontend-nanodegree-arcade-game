@@ -24,6 +24,44 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
+var Player = function() {
+    this.sprite = 'images/char-boy.png';
+};
+
+Function.prototype.inheritsFrom = function(superClass) {
+   this.prototype = Object.create(superClass.prototype);
+   this.prototype.constructor = this;
+};
+
+//Inherits update() and render() methods from superclass
+Player.inheritsFrom(Enemy);
+
+
+Player.prototype.handleInput = function(key) {
+  switch (key) {
+      case 37:
+          // code
+          break;
+      case 38:
+          // code
+          break;
+      case 39:
+          // code
+          break;
+      case 40:
+          // code
+          break;
+      
+      default:
+      //if other keys was pressed do nothing
+          break;
+  }  
+};
+
+
+var allEnemies = [new Enemy()];
+var player =  new Player();
+
 
 
 // Now instantiate your objects.
