@@ -1,16 +1,21 @@
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-
+        
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
+    this.x = x;
+    this.y = y;
     this.sprite = 'images/enemy-bug.png';
 };
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
+Enemy.prototype.update = function(dt, newX, newY) {
+    //TODO Use dt parameter
+    this.x = newX != undefined ? newX : this.x;
+    this.y = newY != undefined ? newY : this.y;
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
@@ -21,10 +26,20 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+Enemy.prototype.canUnitChangePosition = function() {
+    //TODO Make playerMxX pototype variables.
+    if (this.x <= playerMaxX && this.y <= playerMaxY) 
+        return true;
+    else {
+        return false;
+    }
+};
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function() {
+var Player = function(x, y) {
+    Enemy.call(this, x, y);
     this.sprite = 'images/char-boy.png';
 };
 
@@ -38,37 +53,47 @@ Player.inheritsFrom(Enemy);
 
 
 Player.prototype.handleInput = function(key) {
+    //invokes even if not reqiure
+  var canChangePosition = this.canUnitChangePosition();
   switch (key) {
-      case 37:
-          // code
+      case "left":
+          //TODO Bug palyer disappears when mroe then max value.
+             this.update(undefined, canChangePosition ? this.x - xStep : playerStartXPosition);
           break;
-      case 38:
-          // code
+      case "up":
+            this.update(undefined, undefined, canChangePosition ? this.y - yStep : playerStartYPosition);
           break;
-      case 39:
-          // code
+      case "right":
+            this.update(undefined, canChangePosition ? this.x + xStep : playerStartXPosition);
           break;
-      case 40:
-          // code
+      case "down":
+           this.update(undefined, undefined, canChangePosition ? this.y + yStep : playerStartYPosition);
           break;
-      
-      default:
-      //if other keys was pressed do nothing
-          break;
-  }  
+  }
+  this.render();
+  
 };
-
-
-var allEnemies = [new Enemy()];
-var player =  new Player();
-
-
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
+//Global variables for player.
+var playerStartXPosition = 202;
+var playerStartYPosition = 415;
+var playerMaxX = 404;
+var playerMaxY = 415;
+var enemyMaxX = 404;
+var enemyMinY = 83;
+var enemyMaxY = 332;
 
+var xStep = 101;
+var yStep = 83;
+
+var player = new Player(playerStartXPosition, playerStartYPosition);
+
+console.log(player.x);
+console.log(player.y);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
