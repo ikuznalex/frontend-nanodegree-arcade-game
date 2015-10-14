@@ -5,18 +5,17 @@ var Enemy = function(x, y, speedOfMovement /*msec*/) {
         
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
+  
     this.x = x || this.startXPosition;
     this.y = y || this.startYPosition;
     this.sprite = 'images/enemy-bug.png';
-    this.speedOfMovement = speedOfMovement;
+    this.speedOfMovement = speedOfMovement || 0;
 };
 
-//Static enemy variables
+//prototypal variables loaded to mamory once.
 Enemy.prototype.maxX = 404;
 Enemy.prototype.minY = 83;
 Enemy.prototype.maxY = 332;
-
-
 Enemy.prototype.xStep = 101;
 Enemy.prototype.yStep = 83;
 
@@ -24,8 +23,8 @@ Enemy.prototype.yStep = 83;
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt, newX, newY) {
     //TODO Use dt parameter
-    this.x = newX || this.x;
-    this.y = newY || this.y;
+    this.x = typeof(newX) === "undefined" ? this.x : newX;
+    this.y = typeof(newY) === "undefined" ? this.y : newY;
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
@@ -37,10 +36,9 @@ Enemy.prototype.render = function() {
 };
 
 Enemy.prototype.canUnitChangePosition = function() {
-    //TODO maybe better to make this items prototype variables?
-    if (this.x <= this.maxX && this.y <= this.maxY) 
+    if (this.x <= this.maxX && this.x >= 0 && this.y <= this.maxY && this.y >= -10) {
         return true;
-    else {
+    } else {
         return false;
     }
 };
@@ -67,30 +65,33 @@ Player.inheritsFrom(Enemy);
 
 //Static player variables.
 Player.prototype.startXPosition = 202;
-Player.prototype.startYPosition = 415; 
+Player.prototype.startYPosition = 405; 
 Player.prototype.maxX = 404;
-Player.prototype.maxY = 415;
+Player.prototype.maxY = 405;
 
 Player.prototype.handleInput = function(key) {
     //invokes even if not reqiure
-  var canChangePosition = this.canUnitChangePosition();
+    //TODO: coordinates before change should be checked.
   switch (key) {
       case "left":
-          //TODO Bug palyer disappears when mroe then max value.
-             this.update(undefined, canChangePosition ? this.x - this.xStep : this.startXPosition);
+          //TODO dt should be passed here instead null
+           this.update(undefined,  this.x - this.xStep);
           break;
       case "up":
-            this.update(undefined, undefined, canChangePosition ? this.y - this.yStep : this.startYPosition);
+            this.update(undefined, undefined, this.y - this.yStep);
+            console.log(this.y);
           break;
       case "right": 
-            this.update(undefined, canChangePosition ? this.x + this.xStep : this.startXPosition);
+            this.update(undefined, this.x + this.xStep);
           break;
       case "down":
-           this.update(undefined, undefined, canChangePosition ? this.y + this.yStep : this.startYPosition);
+           this.update(undefined, undefined, this.y + this.yStep);
           break;
   }
+  if (!this.canUnitChangePosition()) { 
+      this.update(undefined, this.startXPosition, this.startYPosition);
+  }
   this.render();
-  
 };
 
 
@@ -99,7 +100,6 @@ Player.prototype.handleInput = function(key) {
 // Place the player object in a variable called player
 
 var player = new Player();
-console.log(player.x + " " + player.y);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
