@@ -45,7 +45,6 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
-         //TODO Uncomment the update function
         update(dt);
         render();
 
@@ -92,9 +91,9 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
-       /* allEnemies.forEach(function(enemy) {
+        allEnemies.forEach(function(enemy) {
             enemy.update(dt);
-        }); */
+        });
         player.update(dt);
     }
 
@@ -149,9 +148,9 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
-       /* allEnemies.forEach(function(enemy) {
+        allEnemies.forEach(function(enemy) {
             enemy.render();
-        });*/
+        });
 
         player.render();
     }

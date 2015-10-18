@@ -1,23 +1,28 @@
 // Enemies our player must avoid
-var Enemy = function(x, y, speedOfMovement /*msec*/) {
+var Enemy = function(speedOfMovement /*msec*/) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
         
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
   
-    this.x = x || this.startXPosition;
-    this.y = y || this.startYPosition;
+   /* this.x = typeof(x) === "undefined" ? this.startXPosition : x;
+    this.y = typeof(y) === "undefined" ? this.startYPosition : y; */
+    this.x = this.startXPosition;
+    this.y = this.startYPosition;
     this.sprite = 'images/enemy-bug.png';
     this.speedOfMovement = speedOfMovement || 0;
 };
 
-//prototypal variables loaded to mamory once.
+//prototypal variables loaded to memory once.
+Enemy.prototype.startXPosition = 0;
+Enemy.prototype.startYPosition = 83;
 Enemy.prototype.maxX = 404;
 Enemy.prototype.minY = 83;
 Enemy.prototype.maxY = 332;
 Enemy.prototype.xStep = 101;
 Enemy.prototype.yStep = 83;
+
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -43,9 +48,18 @@ Enemy.prototype.canUnitChangePosition = function() {
     }
 };
 
-//Set timeout example
-// setTimeout(function() { alert('0.5 секунды') }, 500)
+Enemy.prototype.startMovement = function() {
+    //Variable needed for access to correct this context
+    //TODO Implememt enemy movement here
+      var enemy = this;
+      while (enemy.x <= enemy.maxX) {
+          setTimeout(function() {
+              enemy.update(undefined, enemy.x + enemy.xStep, undefined);
+              enemy.render();
+          }, 1000);
+      }
 
+};
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -79,7 +93,6 @@ Player.prototype.handleInput = function(key) {
           break;
       case "up":
             this.update(undefined, undefined, this.y - this.yStep);
-            console.log(this.y);
           break;
       case "right": 
             this.update(undefined, this.x + this.xStep);
@@ -98,9 +111,14 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-
+var maxNumberOfEnemies = 5;
 var player = new Player();
-var allEnemies = [ new Enemy(0, 83, 30) ];
+var allEnemies = [ new Enemy(undefined,undefined, 50) ];
+
+//Start enemies to move from the start of the game.
+allEnemies.forEach(function(enemy) {
+    enemy.startMovement();
+});
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
