@@ -27,8 +27,11 @@ Enemy.prototype.update = function(dt, newX, newY) {
     // TODO: You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-     this.x = typeof newX === undefined || !this.canUnitChangePosition() ? this.startXPosition : this.x + this.speedOfMovement;
-     this.y = typeof newY === undefined || !this.canUnitChangePosition() ? this.startYPosition : this.y;
+    var xToSet = typeof newX === "undefined" ? this.x + this.speedOfMovement : newX;
+    var yToSet = typeof newY === "undefined" ? this.y : newY;
+    var canChangePosition = this.canUnitChangePosition(xToSet, yToSet);
+    this.x = !canChangePosition ? this.startXPosition : xToSet;
+    this.y = !canChangePosition ? this.startYPosition : yToSet;
 };
 
 // Draw the enemy on the screen, required method for game
@@ -36,8 +39,8 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Enemy.prototype.canUnitChangePosition = function() {
-    if (this.x <= this.maxX) {
+Enemy.prototype.canUnitChangePosition = function(x, y) {
+    if (x <= this.maxX) {
         return true;
     } else {
         return false;
@@ -66,8 +69,8 @@ Player.prototype.startYPosition = 405;
 Player.prototype.maxX = 404;
 Player.prototype.maxY = 405;
 
-Player.prototype.canUnitChangePosition = function() {
-    if (this.x <= this.maxX && this.x >= 0 && this.y <= this.maxY && this.y >= -10) {
+Player.prototype.canUnitChangePosition = function(x, y) {
+    if (x <= this.maxX && x >= 0 && y <= this.maxY && y >= -10) {
         return true;
     } else {
         return false;
@@ -83,8 +86,9 @@ Player.prototype.handleInput = function(key) {
           //TODO dt should be passed here instead null
            this.update(undefined,  this.x - this.xStep);
           break;
-      case "up":
+      case "up": 
             this.update(undefined, undefined, this.y - this.yStep);
+            console.log(this.x + " " + this.y);
           break;
       case "right": 
             this.update(undefined, this.x + this.xStep);
@@ -92,9 +96,6 @@ Player.prototype.handleInput = function(key) {
       case "down":
            this.update(undefined, undefined, this.y + this.yStep);
           break;
-  }
-  if (!this.canUnitChangePosition()) { 
-      this.update(undefined, this.startXPosition, this.startYPosition);
   }
   this.render();
 };
