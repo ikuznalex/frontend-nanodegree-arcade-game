@@ -27,9 +27,8 @@ Enemy.prototype.update = function(dt, newX, newY) {
     // TODO: You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-     this.x = typeof(newX) === "undefined" || !this.canUnitChangePosition() ? this.startXPosition : newX + this.speedOfMovement;
-     this.y = typeof(newY) === "undefined" || !this.canUnitChangePosition() ? this.startYPosition : newY;
-     //maybe check somehow that it is an enemy
+     this.x = typeof newX === undefined || !this.canUnitChangePosition() ? this.startXPosition : this.x + this.speedOfMovement;
+     this.y = typeof newY === undefined || !this.canUnitChangePosition() ? this.startYPosition : this.y;
 };
 
 // Draw the enemy on the screen, required method for game
@@ -48,8 +47,8 @@ Enemy.prototype.canUnitChangePosition = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function(x, y, speedOfMovement) {
-    Enemy.call(this, x, y, speedOfMovement);
+var Player = function(speedOfMovement) {
+    Enemy.call(this, speedOfMovement);
     this.sprite = 'images/char-boy.png';
 };
 
@@ -104,7 +103,7 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var player = new Player(5);
+var player = new Player();
 var enemy1 = new Enemy(5);
 
 var enemy2 = new Enemy(10);
