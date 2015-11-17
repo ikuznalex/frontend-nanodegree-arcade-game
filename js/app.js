@@ -1,13 +1,10 @@
 // Enemies our player must avoid
-var Enemy = function(speedOfMovement /*msec*/) {
+var Enemy = function(speedOfMovement /*pixels*/) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
         
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-  
-   /* this.x = typeof(x) === "undefined" ? this.startXPosition : x;
-    this.y = typeof(y) === "undefined" ? this.startYPosition : y; */
     this.x = this.startXPosition;
     this.y = this.startYPosition;
     this.sprite = 'images/enemy-bug.png';
@@ -27,12 +24,12 @@ Enemy.prototype.yStep = 83;
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt, newX, newY) {
-    //TODO Use dt parameter
-    this.x = typeof(newX) === "undefined" ? this.x : newX;
-    this.y = typeof(newY) === "undefined" ? this.y : newY;
-    // You should multiply any movement by the dt parameter
+    // TODO: You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+     this.x = typeof(newX) === "undefined" || !this.canUnitChangePosition() ? this.startXPosition : newX + this.speedOfMovement;
+     this.y = typeof(newY) === "undefined" || !this.canUnitChangePosition() ? this.startYPosition : newY;
+     //maybe check somehow that it is an enemy
 };
 
 // Draw the enemy on the screen, required method for game
@@ -41,24 +38,11 @@ Enemy.prototype.render = function() {
 };
 
 Enemy.prototype.canUnitChangePosition = function() {
-    if (this.x <= this.maxX && this.x >= 0 && this.y <= this.maxY && this.y >= -10) {
+    if (this.x <= this.maxX) {
         return true;
     } else {
         return false;
     }
-};
-
-Enemy.prototype.startMovement = function() {
-    //Variable needed for access to correct this context
-    //TODO Implememt enemy movement here
-      var enemy = this;
-      while (enemy.x <= enemy.maxX) {
-          setTimeout(function() {
-              enemy.update(undefined, enemy.x + enemy.xStep, undefined);
-              enemy.render();
-          }, 1000);
-      }
-
 };
 
 // Now write your own player class
@@ -82,6 +66,15 @@ Player.prototype.startXPosition = 202;
 Player.prototype.startYPosition = 405; 
 Player.prototype.maxX = 404;
 Player.prototype.maxY = 405;
+
+Player.prototype.canUnitChangePosition = function() {
+    if (this.x <= this.maxX && this.x >= 0 && this.y <= this.maxY && this.y >= -10) {
+        return true;
+    } else {
+        return false;
+    }
+};
+
 
 Player.prototype.handleInput = function(key) {
     //invokes even if not reqiure
@@ -111,14 +104,18 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var maxNumberOfEnemies = 5;
-var player = new Player();
-var allEnemies = [ new Enemy(undefined,undefined, 50) ];
+var player = new Player(5);
+var enemy1 = new Enemy(5);
 
-//Start enemies to move from the start of the game.
-allEnemies.forEach(function(enemy) {
-    enemy.startMovement();
-});
+var enemy2 = new Enemy(10);
+enemy2.startYPosition = 83*2;
+var enemy3 = new Enemy(1);
+enemy3.startYPosition = 83*3;
+
+var allEnemies = [ enemy1,
+                   enemy2,
+                   enemy3 ];
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.

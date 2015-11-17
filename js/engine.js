@@ -66,7 +66,7 @@ var Engine = (function(global) {
     function init() {
         reset();
         lastTime = Date.now();
-        main();
+        win.requestAnimationFrame(main);
     }
 
     /* This function is called by main (our game loop) and itself calls all
@@ -80,6 +80,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
+         
         // checkCollisions();
     }
 
@@ -94,6 +95,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
+        
         player.update(dt);
     }
 
@@ -181,4 +183,6 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    
+
 })(this);
